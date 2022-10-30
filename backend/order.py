@@ -7,7 +7,9 @@ from kafka import KafkaProducer
 ORDER_KAFKA_TOPIC = "order_details"
 ORDER_LIMIT = 15
 
-producer = KafkaProducer(bootstrap_servers="localhost:29092")
+producer = KafkaProducer(
+    bootstrap_servers="localhost:29092"
+)
 
 for i in range(1, ORDER_LIMIT):
     data = {
@@ -21,6 +23,9 @@ for i in range(1, ORDER_LIMIT):
         }
     }
 
-    producer.send(ORDER_KAFKA_TOPIC, json.dumps(data).encode("utf-8"))
+    producer.send(
+        ORDER_KAFKA_TOPIC, 
+        json.dumps(data).encode("utf-8")
+    )
     print(f"Sent order {i}")
     time.sleep(10)
