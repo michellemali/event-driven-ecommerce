@@ -9,15 +9,47 @@ services:
       - 22181:2181
   
   kafka:
+    hostname: kafka
     image: confluentinc/cp-kafka:5.3.1
     depends_on:
       - zookeeper
     ports:
       - 29092:29092
+      - 9093:9093
+    expose:
+      - 9093
+      - 29092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9093,PLAINTEXT_HOST://kafka:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  analytics:
+    image: analytics
+    depends_on:
+      - zookeeper
+      - kafka
+    build: 
+      context: ./Analytics
+      dockerfile: Dockerfile
+
+  order:
+    image: order
+    depends_on:
+      - zookeeper
+      - kafka
+    build: 
+      context: ./Order
+      dockerfile: Dockerfile
+
+  transaction:
+    image: transaction
+    depends_on:
+      - zookeeper
+      - kafka
+    build: 
+      context: ./Transaction
+      dockerfile: Dockerfile
